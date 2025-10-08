@@ -248,8 +248,7 @@ class HelpSession:
                 pass
 
             return f"**{cmd.cog_name}**"
-        else:
-            return "**\u200bNo Category:**"
+        return "**\u200bNo Category:**"
 
     def _get_command_params(self, cmd: commands.Command) -> str:
         """

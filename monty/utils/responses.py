@@ -18,14 +18,14 @@ from monty.log import get_logger
 
 
 __all__ = (
-    "DEFAULT_SUCCESS_COLOUR",
-    "SUCCESS_HEADERS",
     "DEFAULT_FAILURE_COLOUR",
+    "DEFAULT_SUCCESS_COLOUR",
     "FAILURE_HEADERS",
+    "SUCCESS_HEADERS",
     "USER_INPUT_ERROR_REPLIES",
     "send_general_response",
-    "send_positive_response",
     "send_negatory_response",
+    "send_positive_response",
 )
 
 _UNSET: Any = object()
@@ -127,8 +127,7 @@ async def send_general_response(
     if embed is None:
         if message is None:
             return await channel.send(response, **kwargs)
-        else:
-            return await message.edit(response, **kwargs)
+        return await message.edit(response, **kwargs)
 
     if embed is _UNSET:  # pragma: no branch
         embed = disnake.Embed(colour=colour)
@@ -140,8 +139,7 @@ async def send_general_response(
 
     if message is None:
         return await channel.send(embed=embed, **kwargs)
-    else:
-        return await message.edit(embed=embed, **kwargs)
+    return await message.edit(embed=embed, **kwargs)
 
 
 async def send_positive_response(

@@ -50,9 +50,8 @@ def sub_clyde(username: str | None) -> str | None:
         return match[1] + char
 
     if username:
-        return re.sub(r"(clyd)(e)", replace_e, username, flags=re.I)
-    else:
-        return username  # Empty string or None
+        return re.sub(r"(clyd)(e)", replace_e, username, flags=re.IGNORECASE)
+    return username  # Empty string or None
 
 
 async def suppress_embeds(

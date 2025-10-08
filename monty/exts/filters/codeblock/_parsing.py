@@ -92,7 +92,7 @@ def find_code_blocks(message: str) -> Sequence[CodeBlock] | None:
         if groups["tick"] == BACKTICK and language:
             log.trace("Message has a valid code block with a language; returning None.")
             return None
-        elif has_lines(groups["code"], constants.CodeBlock.minimum_lines):
+        if has_lines(groups["code"], constants.CodeBlock.minimum_lines):
             code_block = CodeBlock(groups["code"], language, groups["tick"])
             code_blocks.append(code_block)
         else:
@@ -121,9 +121,8 @@ def _is_python_code(content: str) -> bool:
     if not all(isinstance(node, ast.Expr) for node in tree.body):
         log.trace("Code is valid python.")
         return True
-    else:
-        log.trace("Code consists only of expressions.")
-        return False
+    log.trace("Code consists only of expressions.")
+    return False
 
 
 def _is_repl_code(content: str, threshold: int = 3) -> bool:

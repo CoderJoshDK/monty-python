@@ -74,8 +74,7 @@ def _get_no_ticks_message(content: str) -> str | None:
             "helps improve the legibility and makes it easier for us to help you.\n\n"
             f"**To do this, use the following method:**\n{example_blocks}"
         )
-    else:
-        log.trace("Aborting missing code block instructions: content is not Python code.")
+    log.trace("Aborting missing code block instructions: content is not Python code.")
 
 
 def _get_bad_lang_message(content: str) -> str | None:
@@ -90,7 +89,7 @@ def _get_bad_lang_message(content: str) -> str | None:
     info = _parsing.parse_bad_language(content)
     if not info:
         log.trace("Aborting bad language instructions: language specified isn't Python.")
-        return
+        return None
 
     lines: list[str] = []
     language = info.language
@@ -108,7 +107,7 @@ def _get_bad_lang_message(content: str) -> str | None:
 
     if not lines:
         log.trace("Nothing wrong with the language specifier; no instructions to return.")
-        return
+        return None
 
     joined_lines = " ".join(lines)
     example_blocks = _get_example(language)
@@ -138,8 +137,7 @@ def _get_no_lang_message(content: str) -> str | None:
             "it easier for us to help you.\n\n"
             f"**To do this, use the following method:**\n{example_blocks}"
         )
-    else:
-        log.trace("Aborting missing language instructions: content is not Python code.")
+    log.trace("Aborting missing language instructions: content is not Python code.")
 
 
 def get_instructions(content: str) -> str | None:
@@ -153,7 +151,7 @@ def get_instructions(content: str) -> str | None:
     blocks = _parsing.find_code_blocks(content)
     if blocks is None:
         log.trace("At least one valid code block found; no instructions to return.")
-        return
+        return None
 
     if not blocks:
         log.trace("No code blocks were found in message.")

@@ -283,9 +283,8 @@ class TokenRemover(commands.Cog, name="Token Remover"):
         # is not checked.
         if timestamp + TOKEN_EPOCH >= DISCORD_EPOCH:
             return True
-        else:
-            log.debug(f"Invalid token timestamp '{b64_content}': smaller than Discord epoch")
-            return False
+        log.debug(f"Invalid token timestamp '{b64_content}': smaller than Discord epoch")
+        return False
 
     @staticmethod
     def is_maybe_valid_hmac(b64_content: str) -> bool:
@@ -302,8 +301,7 @@ class TokenRemover(commands.Cog, name="Token Remover"):
                 " case-insensitively unique characters"
             )
             return False
-        else:
-            return True
+        return True
 
 
 def setup(bot: Monty) -> None:

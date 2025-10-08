@@ -153,7 +153,7 @@ class RolloutCog(commands.Cog, name="Rollouts"):
         embed.description = "\n".join(names)
         await ctx.send(embed=embed, components=button)
 
-    # todo: make this easier to use (selects, modals, buttons)
+    # TODO: make this easier to use (selects, modals, buttons)
     # while the interface is clumsy right now, this is currently in development
     @cmd_rollouts.command("create")
     async def cmd_rollouts_create(
@@ -170,7 +170,7 @@ class RolloutCog(commands.Cog, name="Rollouts"):
             if result.one_or_none():
                 raise commands.BadArgument("A rollout with that name already exists.")
 
-            if percent_goal not in range(0, 100 + 1):
+            if percent_goal not in range(100 + 1):
                 raise commands.BadArgument("percent_goal must be within 0 to 100 inclusive.")
 
             # pick a random starting number divisible by 100
@@ -342,7 +342,7 @@ class RolloutCog(commands.Cog, name="Rollouts"):
         else:
             if not feature.rollout:
                 raise commands.BadArgument("This feature is not linked to any rollout.")
-            elif feature.rollout.id != rollout.id:
+            if feature.rollout.id != rollout.id:
                 raise commands.BadArgument("This feature is linked to a different rollout.")
             # this is a workaround to https://github.com/collerek/ormar/issues/720
             async with self.bot.db.begin() as session:

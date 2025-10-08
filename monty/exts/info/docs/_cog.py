@@ -258,7 +258,7 @@ class DocCog(
         if guild:
             if guild.id == constants.Guilds.disnake:
                 return ["disnake", "disnake.ext.commands", "disnake.ext.tasks"]
-            elif guild.id == constants.Guilds.nextcord:
+            if guild.id == constants.Guilds.nextcord:
                 return ["nextcord", "nextcord.ext.commands", "nextcord.ext.tasks"]
 
         return [
@@ -409,19 +409,17 @@ class DocCog(
                 package = conflicting_symbol.package
                 self.doc_symbols_new[package][sys.intern(new_name)] = conflicting_symbol
                 return symbol_name
-            else:
-                return new_name
+            return new_name
 
         # When there's a conflict, and the package names of the items differ, use the package name as a prefix.
         if package_name != item.package:
             if package_name in PRIORITY_PACKAGES:
                 return rename(item.package, rename_extant=True)
-            else:
-                return rename(package_name)
+            return rename(package_name)
 
         # If the symbol's group is a non-priority group from FORCE_PREFIX_GROUPS,
         # add it as a prefix to disambiguate the symbols.
-        elif group_name in FORCE_PREFIX_GROUPS:
+        if group_name in FORCE_PREFIX_GROUPS:
             if item.group in FORCE_PREFIX_GROUPS:
                 needs_moving = FORCE_PREFIX_GROUPS.index(group_name) < FORCE_PREFIX_GROUPS.index(item.group)
             else:
@@ -430,8 +428,7 @@ class DocCog(
 
         # If the above conditions didn't pass, either the existing symbol has its group in FORCE_PREFIX_GROUPS,
         # or deciding which item to rename would be arbitrary, so we rename the existing symbol.
-        else:
-            return rename(item.group, rename_extant=True)
+        return rename(item.group, rename_extant=True)
 
     async def refresh_whitelist_and_blacklist(self) -> None:
         """Refresh internal whitelist and blacklist."""
@@ -581,7 +578,6 @@ class DocCog(
     @commands.slash_command(name="docs")
     async def slash_docs(self, inter: disnake.AppCmdInter) -> None:
         """Search python package documentation."""
-        pass
 
     async def maybe_pypi_docs(self, package: str, strip: bool = True) -> tuple[bool, str | None]:
         """Find the documentation url on PyPI for a given package."""
@@ -673,7 +669,7 @@ class DocCog(
                         allowed_mentions=disnake.AllowedMentions.none(),
                         components=DeleteButton(inter.author),
                     )
-                return
+                return None
 
             doc_embed, doc_item = res
             view = DocView(inter, self.bot, doc_item, doc_embed)
@@ -681,7 +677,7 @@ class DocCog(
             await view.wait()
             view.disable()
             if getattr(view, "deleted", False):
-                return
+                return None
             try:
                 if msg is not None:
                     await msg.edit(view=view)
@@ -727,7 +723,7 @@ class DocCog(
         if not query:
             return self._get_default_completion(inter, inter.guild)
         # ----------------------------------------------------
-        guild_id = inter.guild and inter.guild.id or inter.guild_id
+        guild_id = (inter.guild and inter.guild.id) or inter.guild_id
         blacklist = BLACKLIST_MAPPING.get(guild_id or 0)
 
         query = query.strip()
@@ -737,8 +733,7 @@ class DocCog(
         def processor(sentence: str) -> str:
             if (sym := self.doc_symbols_all.get(sentence)) and sym.package in blacklist:
                 return ""
-            else:
-                return sentence
+            return sentence
 
         # further fuzzy search by using rapidfuzz ratio matching
         fuzzed = rapidfuzz.process.extract(
@@ -785,7 +780,7 @@ class DocCog(
         query: search query
         """
         results = {}
-        guild_id = inter.guild and inter.guild.id or inter.guild_id
+        guild_id = (inter.guild and inter.guild.id) or inter.guild_id
         blacklist = BLACKLIST_MAPPING.get(guild_id)
 
         query = query.strip()
@@ -853,11 +848,10 @@ class DocCog(
         if link:
             await inter.send(f"Found documentation for {package} at <{link}>.", components=components)
             return
-        else:
-            msg = f"No docs found for {package}."
-            if res[1]:
-                msg += f"\nHowever, I did find this homepage while looking: <{res[1]}>."
-            await inter.send(msg, components=components)
+        msg = f"No docs found for {package}."
+        if res[1]:
+            msg += f"\nHowever, I did find this homepage while looking: <{res[1]}>."
+        await inter.send(msg, components=components)
 
     @docs_group.command(name="setdoc", aliases=("s",))
     @lock(NAMESPACE, COMMAND_LOCK_SINGLETON, raise_error=True)
@@ -960,7 +954,7 @@ class DocCog(
     async def clear_cache_command(
         self,
         ctx: commands.Context,
-        package_name: PackageName | Literal["*"],  # noqa: F722
+        package_name: PackageName | Literal["*"],
     ) -> None:
         """Clear the persistent redis cache for `package`."""
         components = DeleteButton(ctx.author, allow_manage_messages=False, initial_message=ctx.message)
@@ -1028,7 +1022,7 @@ class DocCog(
 
         await ctx.send(
             f"Successfully whitelisted `{package_name}` in the following guilds:"
-            f" {', '.join([str(x) for x in guild_ids])}",  # noqa: E501
+            f" {', '.join([str(x) for x in guild_ids])}",
             components=components,
         )
 
@@ -1075,7 +1069,7 @@ class DocCog(
 
         await ctx.send(
             f"Successfully de-whitelisted `{package_name}` in the following guilds:"
-            f" {', '.join([str(x) for x in guild_ids])}",  # noqa: E501
+            f" {', '.join([str(x) for x in guild_ids])}",
             components=components,
         )
 

@@ -12,8 +12,8 @@ from .helpers import pad_base64
 
 __all__ = [
     "disambiguate",
-    "replace_many",
     "pad_base64",
+    "replace_many",
 ]
 
 
@@ -127,7 +127,7 @@ def replace_many(
 
     # Join and compile words to replace into a regex
     pattern = "|".join(re.escape(word) for word in words_to_replace)
-    regex = re.compile(pattern, re.I if ignore_case else 0)
+    regex = re.compile(pattern, re.IGNORECASE if ignore_case else 0)
 
     def _repl(match: re.Match) -> str:
         """Returns replacement depending on `ignore_case` and `match_case`."""
@@ -141,9 +141,8 @@ def replace_many(
         cleaned_word = word.translate(str.maketrans("", "", string.punctuation))
         if cleaned_word.isupper():
             return replacement.upper()
-        elif cleaned_word[0].isupper():
+        if cleaned_word[0].isupper():
             return replacement.capitalize()
-        else:
-            return replacement.lower()
+        return replacement.lower()
 
     return regex.sub(_repl, sentence)

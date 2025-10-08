@@ -113,6 +113,8 @@ select = [
     "T203", # flake8-print
 ]
 ignore = [
+    # flake8-commas
+    "COM",
     # Missing Docstrings
     "D100",
     "D101",

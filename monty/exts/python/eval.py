@@ -157,10 +157,10 @@ class Snekbox(
         """Return an emoji corresponding to the status code or lack of output in result."""
         if not results["stdout"].strip():  # No output
             return ":warning:"
-        elif results["returncode"] == 0:  # No error
+        if results["returncode"] == 0:  # No error
             return ":white_check_mark:"
-        else:  # Exception
-            return ":x:"
+        # Exception
+        return ":x:"
 
     async def format_output(self, output: str) -> tuple[str, str | None]:
         """
@@ -453,7 +453,6 @@ class Snekbox(
     @commands.is_owner()
     async def manage_snekbox(self, ctx: commands.Context) -> None:
         """Commands for managing the snekbox instance."""
-        pass
 
     @manage_snekbox.group("packages", aliases=("pack", "packs", "p"), invoke_without_command=True)
     async def manage_snekbox_packages(self, ctx: commands.Context) -> None:

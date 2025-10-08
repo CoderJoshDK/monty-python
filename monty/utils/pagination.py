@@ -202,7 +202,7 @@ class LinePaginator(commands.Paginator):
             initial_message = ctx.message if isinstance(ctx, commands.Context) else None
             components = DeleteButton(ctx.author, allow_manage_messages=False, initial_message=initial_message)
             await ctx.send(embed=embed, components=components)
-            return
+            return None
 
         if footer_text:
             embed.set_footer(text=f"{footer_text} (Page {current_page + 1}/{len(paginator.pages)})")
@@ -218,7 +218,7 @@ class LinePaginator(commands.Paginator):
         view = disnake.ui.View()
         for id, emoji in PAGINATION_EMOJI.items():
             # Add all the applicable emoji to the message
-            log.trace(f"Adding reaction: {repr(emoji)}")
+            log.trace(f"Adding reaction: {emoji!r}")
             view.add_item(
                 disnake.ui.Button(
                     style=disnake.ButtonStyle.gray,
@@ -253,7 +253,7 @@ class LinePaginator(commands.Paginator):
                 log.debug("Got delete inter")
                 return await message.delete()
 
-            elif PAGINATION_EMOJI.get(event_name) == FIRST_EMOJI:
+            if PAGINATION_EMOJI.get(event_name) == FIRST_EMOJI:
                 current_page = 0
 
                 log.debug(f"Got first page reaction - changing to page 1/{len(paginator.pages)}")
@@ -413,7 +413,7 @@ class ImagePaginator(commands.Paginator):
 
         if len(paginator.pages) <= 1:
             await ctx.send(embed=embed)
-            return
+            return None
 
         embed.set_footer(text=f"Page {current_page + 1}/{len(paginator.pages)}")
         message = await ctx.send(embed=embed)

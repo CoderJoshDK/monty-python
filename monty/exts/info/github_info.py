@@ -237,7 +237,7 @@ class GithubInfo(
         """
         await self._fetch_and_update_ratelimits()
 
-        # todo: cache the schema in redis and load from there
+        # TODO: cache the schema in redis and load from there
         self.gql = await self.gql_client.connect_async(reconnecting=True)
 
     def cog_unload(self) -> None:
@@ -277,8 +277,7 @@ class GithubInfo(
             monty.utils.services.update_github_ratelimits_on_request(r)
             if as_text:
                 return await r.text()
-            else:
-                return await r.json()
+            return await r.json()
 
     def _format_github_global_id(self, prefix: str, *ids: int, template: int = 0) -> str:
         # This is not documented, but is at least the current format as of writing this comment.
@@ -353,7 +352,7 @@ class GithubInfo(
         user: The user to get repositories for.
         repo: The repository to fetch.
         """
-        # todo: get from the database
+        # TODO: get from the database
         if guild_id:
             user = user or await self.fetch_guild_to_org(guild_id)
 
@@ -373,9 +372,8 @@ class GithubInfo(
         if user_or_repo.count("/") > 0:
             await self.github_repo_info(ctx, user_or_repo)
             return
-        else:
-            await self.github_user_info(ctx, user_or_repo)
-            return
+        await self.github_user_info(ctx, user_or_repo)
+        return
 
     @github_group.command(name="user", aliases=("userinfo",))
     async def github_user_info(self, ctx: commands.Context, username: str) -> None:
@@ -1363,7 +1361,7 @@ class GithubInfo(
     @commands.Cog.listener("on_message_delete")
     async def on_message_delete(self, message: disnake.Message) -> None:
         """Clear the message from the cache."""
-        # todo: refactor the cache to prune itself *somehow*
+        # TODO: refactor the cache to prune itself *somehow*
         try:
             del self.autolink_cache[message.id]
         except KeyError:
