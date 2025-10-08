@@ -155,7 +155,6 @@ ignore = [
     "C901", # mccabe
     "G004", # Logging statement uses f-string
     "S101", # Use of `assert` detected
-    "S110", # try-except-pass
     "S311", # pseduo-random generators, random is used everywhere for random choices.
 ]
 

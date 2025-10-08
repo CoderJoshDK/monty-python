@@ -26,6 +26,7 @@ if __name__ == "__main__":
     import sys
     import tracemalloc
     import types
+    from contextlib import suppress
     from typing import Any
 
     # establish the object itself
@@ -43,14 +44,10 @@ if __name__ == "__main__":
     except Exception:
         raise
 
-    try:
+    with suppress(Exception):
         unwrapped = inspect.unwrap(src)
         if isinstance(unwrapped, property) and unwrapped.fget:
             unwrapped = inspect.unwrap(unwrapped.fget)
-    except Exception:
-        # continue with possibly wrapped src object in case of error
-        pass
-    else:
         src = unwrapped
 
     trace = tracemalloc.get_object_traceback(src)

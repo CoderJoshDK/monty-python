@@ -3,6 +3,7 @@ import importlib
 import logging
 import textwrap
 from collections.abc import Iterable, Sequence
+from contextlib import suppress
 from typing import Any, Protocol, TypeGuard, cast
 
 import disnake
@@ -164,12 +165,10 @@ def _format_enum_flags(value: Any, enum_cls: type) -> list[str]:
     names = _extract_member_names(value, enum_cls)
 
     if not names:
-        try:
+        with suppress(Exception):
             member_name = getattr(value, "name", None)
             if member_name:
                 names = [member_name.lower()]
-        except Exception:
-            pass
 
     return names or [str(getattr(value, "name", value)).lower()]
 

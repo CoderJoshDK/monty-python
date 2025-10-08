@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import re
 import typing as t
+from contextlib import suppress
 from datetime import datetime, timedelta, timezone
 from ssl import CertificateError
 
@@ -69,13 +70,11 @@ class ArrowConverter(commands.Converter):
     async def convert(self, ctx: AnyContext, argument: str) -> arrow.Arrow:
         """Convert the provided argument into an arrow.Arrow object."""
         # first convert our provided match
-        try:
+        delta: timedelta | None = None
+        with suppress(Exception):
             delta = str_timedelta_from_now(argument)
-        except Exception:
-            pass
-        else:
-            if delta is not None:
-                return arrow.utcnow() + delta
+        if delta is not None:
+            return arrow.utcnow() + delta
 
         try:
             return arrow.get(argument)
