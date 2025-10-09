@@ -1,16 +1,7 @@
-try:
-    import dotenv
-except ModuleNotFoundError:
-    pass
-else:
-    if dotenv.find_dotenv():
-        print("Found .env file, loading environment variables from it.")  # noqa: T201
-        dotenv.load_dotenv(override=True)
-
-
 import asyncio
 import logging
 import os
+from contextlib import suppress
 from functools import partial, partialmethod
 
 import disnake
@@ -20,12 +11,17 @@ from sentry_sdk.integrations.logging import LoggingIntegration
 from sentry_sdk.integrations.redis import RedisIntegration
 
 
-try:
+with suppress(ModuleNotFoundError):
     import rich.traceback
-except ModuleNotFoundError:
-    pass
-else:
-    rich.traceback.install(show_locals=True, word_wrap=True, suppress=[disnake])
+
+    _ = rich.traceback.install(show_locals=True, word_wrap=True, suppress=[disnake])
+
+with suppress(ModuleNotFoundError):
+    import dotenv
+
+    if env_path := dotenv.find_dotenv():
+        print("Found .env file, loading environment variables from it.")  # noqa: T201
+        _ = dotenv.load_dotenv(dotenv_path=env_path, override=True)
 
 ####################
 # NOTE: do not import any other modules from monty before the `log.setup()` call

@@ -2,11 +2,13 @@ import asyncio
 import collections
 import dataclasses
 import functools
+import os
 import socket
 import sys
+from contextlib import suppress
 from datetime import timedelta
 from types import SimpleNamespace
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, final
 from unittest.mock import Mock
 from weakref import WeakValueDictionary
 
@@ -39,20 +41,18 @@ if TYPE_CHECKING:
 
 log = get_logger(__name__)
 
-try:
-    import dotenv
-except ModuleNotFoundError:
-    TEST_GUILDS = None
-else:
-    TEST_GUILDS = dotenv.get_key(".env", "TEST_GUILDS")
-    if TEST_GUILDS:
-        TEST_GUILDS = [int(x.strip()) for x in TEST_GUILDS.split(",")]
-        log.info("TEST_GUILDS FOUND")
+with suppress(ModuleNotFoundError):
+    from dotenv import load_dotenv
+
+    _ = load_dotenv()
+
+TEST_GUILDS = (guilds := os.environ.get("TEST_GUILDS")) and guilds.split(",")
 
 
 __all__ = ("Monty",)
 
 
+@final
 class Monty(commands.Bot):
     """
     Base bot instance.
